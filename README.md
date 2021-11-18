@@ -1,6 +1,8 @@
 # CS640_FALL_2021_Project
 
-Demographic prediction of Twitter users for our CS640 class. Data from https://drive.google.com/drive/folders/1c1zewNOxhhgYFve1eFI4y3HFJ_fKWm-C
+Demographic prediction of Twitter users for our CS640 class. Classification into two age groups (<21 and >=21) and 4 races (black, white, Hispanic/Latino, Asian).
+
+Data from https://drive.google.com/drive/folders/1c1zewNOxhhgYFve1eFI4y3HFJ_fKWm-C
 
 Other useful links include:
 
@@ -10,3 +12,5 @@ Other useful links include:
   <li>https://mivia.unisa.it/ethnicity-recognition-dataset/</li>
   <li>https://pypi.org/project/ethnicolr/</li>
 </ul>
+
+
