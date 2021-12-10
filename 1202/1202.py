@@ -15,6 +15,7 @@ from transformers import BertTokenizer, BertForSequenceClassification, TrainingA
 import emoji
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
 from sklearn import metrics
 from sklearn.metrics import classification_report,accuracy_score,confusion_matrix
 from sklearn.model_selection import train_test_split
@@ -195,6 +196,48 @@ mv_result['pred_class'] = mv_result['pred_class'].astype(int)
 real_class=mv_result["real_class"].to_numpy()
 pred_class=mv_result["pred_class"].to_numpy()
 print(classification_report(y_true=real_class,y_pred=pred_class))
+
+#NB for race
+train1_tweets = train_tweets.dropna(subset=['race'])
+train1_tweets = train1_tweets[~train1_tweets['race'].isin([5])]
+X_train, X_test, y_train, y_test = train_test_split(train1_tweets["tweets"], train1_tweets["race"],
+                                                    test_size = 0.2, random_state = 0)
+
+vectorizer = CountVectorizer(stop_words='english')
+vectorizer.fit(X_train.values)
+vectorizer.vocabulary_
+
+train_input=vectorizer.transform(X_train.values)
+test_input=vectorizer.transform(X_test.values)
+
+nb=MultinomialNB()
+nb.fit(train_input,y_train)
+
+pred_class=nb.predict(test_input)
+metrics.accuracy_score(y_test.values,pred_class)
+print(classification_report(y_true=y_test.values,y_pred=pred_class))
+print('accuracy score:', accuracy_score(y_test, pred_class))
+
+
+#Logistic Regression for race with 5-fold CV
+X_train, X_test, y_train, y_test = train_test_split(train1_tweets["tweets"], train1_tweets["race"],
+                                                    test_size = 0.2, random_state = 0)
+
+vectorizer = CountVectorizer(stop_words='english')
+vectorizer.fit(X_train.values)
+vectorizer.vocabulary_
+
+train_input=vectorizer.transform(X_train.values)
+test_input=vectorizer.transform(X_test.values)
+
+lm=LogisticRegressionCV(cv = 5 ,class_weight = 'balanced', max_iter = 200)
+lm.fit(train_input,y_train)
+pred_class=lm.predict(test_input)
+metrics.accuracy_score(y_test.values,pred_class)
+print(classification_report(y_true=y_test.values,y_pred=pred_class))
+print('accuracy score:', accuracy_score(y_test, pred_class))
+print(confusion_matrix(y_test, pred_class))
+
 
 #BERT
 # tokenizer = BertTokenizer.from_pretrained('bert-large-uncased')
